@@ -296,6 +296,7 @@ def wordcloud(request):
     urls = ["https://www.liga.net/news/all/rss.xml", 'https://inform-ua.info/feed/rss/v1',
             "https://www.rbc.ua/static/rss/all.ukr.rss.xml", "https://fakty.ua/rss_feed/all",
             'https://www.radiosvoboda.org/api/zrqiteuuir', 'https://nv.ua/rss/all.xml']
+    urls_ru = ["https://rss.dw.com/xml/rss-ru-news", "https://news.ru/rss/type/post/", "https://www.vedomosti.ru/rss/news"]
 
     now = datetime.now()
     dt_string = now.strftime("%d.%m.%Y, %H:%M:%S")
@@ -309,16 +310,30 @@ def wordcloud(request):
             if os.path.isfile('static/cloudUkr.png'):
                 os.remove('static/cloudUkr.png')
 
+            if os.path.isfile('static/cloudRus.png'):
+                os.remove('static/cloudRus.png')
+
             if os.path.isfile('static/time.xlsx'):
                 os.remove('static/time.xlsx')
 
             time_df = pd.DataFrame({"last_loaded": [dt_string]})
             time_df.to_excel("static/time.xlsx")
             get_word_cloud(out_stop_words(get_all_data(urls)), "static/cloudUkr")
+            get_word_cloud(out_stop_words(get_all_data(urls_ru)), "static/cloudRus")
     else:
+        if os.path.isfile('static/cloudUkr.png'):
+            os.remove('static/cloudUkr.png')
+
+        if os.path.isfile('static/cloudRus.png'):
+            os.remove('static/cloudRus.png')
+
+        if os.path.isfile('static/time.xlsx'):
+            os.remove('static/time.xlsx')
+
         time_df = pd.DataFrame({"last_loaded": [dt_string]})
         time_df.to_excel("static/time.xlsx")
         get_word_cloud(out_stop_words(get_all_data(urls)), "static/cloudUkr")
+        get_word_cloud(out_stop_words(get_all_data(urls_ru)), "static/cloudRus")
 
     # text = {"text": out_stop_words(get_all_data(urls))}
     return render(request, "wordCloud/base.html")
